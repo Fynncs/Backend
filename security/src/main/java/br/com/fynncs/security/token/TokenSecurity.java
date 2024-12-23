@@ -51,11 +51,11 @@ public class TokenSecurity {
             JsonWebSignature jws = new JsonWebSignature();
             jws.setPayload(claims.toJson());
             jws.setKey(privateKey);
-            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA256);
             String jwt = jws.getCompactSerialization();
             JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.PBES2_HS512_A256KW);
-            String encAlg = ContentEncryptionAlgorithmIdentifiers.AES_256_CBC_HMAC_SHA_512;
+            jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.A256GCMKW);
+            String encAlg = ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
             jwe.setEncryptionMethodHeaderParameter(encAlg);
             jwe.setKey(publicKey);
             jwe.setContentTypeHeaderValue("JWT");
@@ -68,15 +68,15 @@ public class TokenSecurity {
     }
 
     public Authentication validateToken(String token) throws Exception {
-AlgorithmConstraints jwsAlgConstraints
+        AlgorithmConstraints jwsAlgConstraints
                 = new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
-                AlgorithmIdentifiers.HMAC_SHA512);
+                AlgorithmIdentifiers.HMAC_SHA256);
         AlgorithmConstraints jweAlgConstraints
                 = new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
-                KeyManagementAlgorithmIdentifiers.PBES2_HS512_A256KW);
+                KeyManagementAlgorithmIdentifiers.A256GCMKW);
         AlgorithmConstraints jweEncConstraints = new AlgorithmConstraints(
                 AlgorithmConstraints.ConstraintType.PERMIT,
-                ContentEncryptionAlgorithmIdentifiers.AES_256_CBC_HMAC_SHA_512);
+                ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
 
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                 //.setRequireExpirationTime() // the JWT must have an expiration time
@@ -104,11 +104,9 @@ AlgorithmConstraints jwsAlgConstraints
 
     private void generateKey(String fileName) {
         String key = generateKeyRecursive(256, 240, "", null);
-        try {
-            FileWriter fileWriter = new FileWriter(fileName);
+        try (FileWriter fileWriter = new FileWriter(fileName)) {
             fileWriter.write(key);
             fileWriter.flush();
-            fileWriter.close();
         } catch (Exception ex) {
             generateKey(fileName);
         }

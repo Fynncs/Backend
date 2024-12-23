@@ -5,11 +5,20 @@ import br.com.fynncs.security.token.TokenSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 public class Security {
 
-    @Autowired
     private TokenSecurity tokenSecurity;
+
+    public Security(){
+        try{
+            tokenSecurity = new TokenSecurity();
+        }catch (IOException ex){
+            ex.printStackTrace();
+        }
+    }
 
     public String createToken(String id, Integer timeToken) throws Exception {
         Authentication authentication = new Authentication(id);
