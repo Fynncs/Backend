@@ -2,7 +2,6 @@ package br.com.fynncs.security.service;
 
 import br.com.fynncs.security.model.Authentication;
 import br.com.fynncs.security.token.TokenSecurity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
