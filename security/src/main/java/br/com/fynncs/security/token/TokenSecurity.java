@@ -16,9 +16,11 @@ import org.jose4j.lang.ByteUtil;
 import org.jose4j.lang.JoseException;
 
 import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Date;
-import java.util.Random;
+
 
 public class TokenSecurity {
 
@@ -27,8 +29,12 @@ public class TokenSecurity {
     private JwtClaims claims;
 
     public TokenSecurity() throws IOException {
-        privateKey = new AesKey(new BufferedReader(new FileReader(absolutePath("src/main/resources/keys/privateKey.txt"))).readLine().getBytes());
-        publicKey = new AesKey(new BufferedReader(new FileReader(absolutePath("src/main/resources/keys/publicKey.txt"))).readLine().getBytes());
+        String path = TokenSecurity.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        path = path.substring(1, path.indexOf("target"));
+        path += "src/main/resources/keys";
+        path = URLDecoder.decode(path, StandardCharsets.UTF_8);
+        privateKey = new AesKey(new BufferedReader(new FileReader(absolutePath(path + "/privateKey.txt"))).readLine().getBytes());
+        publicKey = new AesKey(new BufferedReader(new FileReader(absolutePath(path + "/publicKey.txt"))).readLine().getBytes());
     }
 
     public String createToken(Authentication authentication) {
@@ -104,24 +110,12 @@ public class TokenSecurity {
 
     private void generateKey(String fileName) {
         String key = generateKeyRecursive(256, 240, "", null);
-        try (FileWriter fileWriter = new FileWriter(fileName)) {
-            fileWriter.write(key);
+        try (FileOutputStream fileWriter = new FileOutputStream(fileName)) {
+            fileWriter.write(key.getBytes());
             fileWriter.flush();
         } catch (Exception ex) {
             generateKey(fileName);
         }
-    }
-
-    private Integer generateValue(Integer limit) {
-        Integer value = null;
-        while (value == null || value > limit) {
-            try {
-                value = new Random().nextInt(0, limit - 1);
-            } catch (Exception ex) {
-
-            }
-        }
-        return value;
     }
 
     private String ascii(int value) {
