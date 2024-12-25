@@ -1,16 +1,12 @@
 package br.com.fynncs.security;
 
 
-import br.com.fynncs.security.model.Authentication;
 import br.com.fynncs.security.service.Security;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 public class SecurityTest {
 
-    @Autowired
     private Security security = new Security();
 
     @Test
