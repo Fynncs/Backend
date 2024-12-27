@@ -1,4 +1,4 @@
-package br.com.fynncs.filtro.exception.model;
+package br.com.fynncs.filter.exception.model;
 
 public class ResultProcessingDetail {
 
