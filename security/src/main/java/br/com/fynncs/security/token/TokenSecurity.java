@@ -1,7 +1,7 @@
 package br.com.fynncs.security.token;
 
 import br.com.fynncs.security.model.Authentication;
-import br.com.fynncs.security.reader.properties.ReaderProperties;
+import br.com.fynncs.services.ReaderEncryptedProperties;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
@@ -18,6 +18,8 @@ import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Properties;
@@ -27,18 +29,22 @@ public class TokenSecurity {
 
     private final AesKey privateKey;
     private final AesKey publicKey;
-    private final ReaderProperties properties;
-    private final String FILE_NAME = "src/main/resources/application.properties";
+    private final ReaderEncryptedProperties properties;
+    private String FILE_NAME = "src/main/resources/application.properties";
 
     @Autowired
-    public TokenSecurity(ReaderProperties properties) throws Exception {
-        this.properties = properties;
+    public TokenSecurity() throws Exception {
+        this.properties = new ReaderEncryptedProperties();
+        String path = TokenSecurity.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        path = path.substring(1, path.indexOf("target"));
+        path += FILE_NAME;
+        FILE_NAME = URLDecoder.decode(path, StandardCharsets.UTF_8);
         properties.read(FILE_NAME);
         if(!createProperties()){
             throw new Exception("Create Properties error!");
         }
-        privateKey = new AesKey(properties.getSpecificPropertieDecrypt("privateKey").getBytes());
-        publicKey = new AesKey(properties.getSpecificPropertieDecrypt("publicKey").getBytes());
+        privateKey = new AesKey(properties.getSpecificPropertiesDecrypt("privateKey").getBytes());
+        publicKey = new AesKey(properties.getSpecificPropertiesDecrypt("publicKey").getBytes());
     }
 
 
@@ -123,15 +129,16 @@ public class TokenSecurity {
 
     private Boolean createProperties() throws Exception {
         if(properties.getProperties() == null
-                || properties.getSpecificPropertie("privateKey") == null
-                || properties.getSpecificPropertie("publicKey") == null
+                || !properties.containsProperties("privateKey")
+                || !properties.containsProperties("publicKey")
+                || !properties.containsProperties("lastModified")
                 || new Date().getTime() > new Date(Long.parseLong(
-                        properties.getSpecificPropertieDecrypt("lastModified"))).getTime() + (1000L * 60 * 60 * 24 * 30)){
+                        properties.getSpecificPropertiesDecrypt("lastModified"))).getTime() + (1000L * 60 * 60 * 24 * 30)){
             properties.setProperties(new Properties());
-            properties.addPropertie("publicKey", generateKey());
-            properties.addPropertie("privateKey", generateKey());
-            properties.addPropertie("lastModified", String.valueOf(new Date().getTime()));
-            return properties.save(FILE_NAME);
+            properties.addEncryptProperties("publicKey", generateKey());
+            properties.addEncryptProperties("privateKey", generateKey());
+            properties.addEncryptProperties("lastModified", String.valueOf(new Date().getTime()));
+            return properties.save(FILE_NAME, properties.getProperties());
         }
         return Boolean.TRUE;
     }
