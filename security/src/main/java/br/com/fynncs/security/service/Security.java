@@ -15,7 +15,7 @@ public class Security {
         this.tokenSecurity = tokenSecurity;
     }
 
-    public String createToken(String id, Integer timeToken) throws Exception {
+    public String createToken(String id, Integer timeToken) {
         Authentication authentication = new Authentication(id);
         return tokenSecurity.createToken(authentication, timeToken);
     }

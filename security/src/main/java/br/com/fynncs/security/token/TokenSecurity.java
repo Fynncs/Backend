@@ -25,9 +25,9 @@ import java.util.Properties;
 @Service
 public class TokenSecurity {
 
-    private AesKey privateKey;
-    private AesKey publicKey;
-    private ReaderProperties properties;
+    private final AesKey privateKey;
+    private final AesKey publicKey;
+    private final ReaderProperties properties;
     private final String FILE_NAME = "src/main/resources/application.properties";
 
     @Autowired

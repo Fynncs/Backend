@@ -5,18 +5,18 @@ import java.util.Properties;
 
 public interface IReaderProperties {
 
-    public Properties read(String fileName) throws IOException;
+    Properties read(String fileName) throws IOException;
 
-    public Properties getProperties();
+    Properties getProperties();
 
-    public void setProperties(Properties properties);
+    void setProperties(Properties properties);
 
-    public String getSpecificPropertie(String value) throws Exception;
+    String getSpecificPropertie(String value) throws Exception;
 
-    public String getSpecificPropertieDecrypt(String value) throws Exception;
+    String getSpecificPropertieDecrypt(String value) throws Exception;
 
-    public void addPropertie(String key, String value) throws Exception;
-    public void addEncryptPropertie(String key, String value) throws Exception;
+    void addPropertie(String key, String value) throws Exception;
+    void addEncryptPropertie(String key, String value) throws Exception;
 
-    public Boolean save(String fileName) throws Exception;
+    Boolean save(String fileName) throws Exception;
 }
