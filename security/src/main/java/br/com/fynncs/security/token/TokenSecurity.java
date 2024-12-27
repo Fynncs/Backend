@@ -1,6 +1,7 @@
 package br.com.fynncs.security.token;
 
 import br.com.fynncs.security.model.Authentication;
+import br.com.fynncs.security.reader.properties.ReaderProperties;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
@@ -14,28 +15,32 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.AesKey;
 import org.jose4j.lang.ByteUtil;
 import org.jose4j.lang.JoseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Date;
+import java.util.Properties;
 
-
+@Service
 public class TokenSecurity {
 
     private AesKey privateKey;
     private AesKey publicKey;
-    private JwtClaims claims;
+    private ReaderProperties properties;
+    private final String FILE_NAME = "src/main/resources/application.properties";
 
-    public TokenSecurity() throws IOException {
-        String path = TokenSecurity.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        path = path.substring(1, path.indexOf("target"));
-        path += "src/main/resources/keys";
-        path = URLDecoder.decode(path, StandardCharsets.UTF_8);
-        privateKey = new AesKey(new BufferedReader(new FileReader(absolutePath(path + "/privateKey.txt"))).readLine().getBytes());
-        publicKey = new AesKey(new BufferedReader(new FileReader(absolutePath(path + "/publicKey.txt"))).readLine().getBytes());
+    @Autowired
+    public TokenSecurity(ReaderProperties properties) throws Exception {
+        this.properties = properties;
+        properties.read(FILE_NAME);
+        if(!createProperties()){
+            throw new Exception("Create Properties error!");
+        }
+        privateKey = new AesKey(properties.getSpecificPropertieDecrypt("privateKey").getBytes());
+        publicKey = new AesKey(properties.getSpecificPropertieDecrypt("publicKey").getBytes());
     }
+
 
     public String createToken(Authentication authentication) {
         return createToken(authentication, 525600);
@@ -108,47 +113,28 @@ public class TokenSecurity {
         }
     }
 
-    private void generateKey(String fileName) {
-        String key = generateKeyRecursive(256, 240, "", null);
-        try (FileOutputStream fileWriter = new FileOutputStream(fileName)) {
-            fileWriter.write(key.getBytes());
-            fileWriter.flush();
-        } catch (Exception ex) {
-            generateKey(fileName);
-        }
+    private String generateKey() {
+        return generateKeyRecursive(256, 240, "", null);
     }
 
     private String ascii(int value) {
         return String.valueOf((char) value);
     }
 
-    private String absolutePath(String fileName) {
-        return absolutePath(fileName, null);
-    }
-
-    private String absolutePath(String fileName, String absoluteName) {
-        try {
-            File file = new File(fileName);
-            absoluteName = file.getAbsolutePath();
-            return generateFile(file, fileName);
-        } catch (Exception ex) {
-            try {
-                return generateFile(new File(absoluteName), absoluteName);
-            } catch (IOException e) {
-                return absolutePath(fileName, absoluteName);
-            }
+    private Boolean createProperties() throws Exception {
+        if(properties.getProperties() == null
+                || properties.getSpecificPropertie("privateKey") == null
+                || properties.getSpecificPropertie("publicKey") == null
+                || new Date().getTime() > new Date(Long.parseLong(
+                        properties.getSpecificPropertieDecrypt("lastModified"))).getTime() + (1000L * 60 * 60 * 24 * 30)){
+            properties.setProperties(new Properties());
+            properties.addPropertie("publicKey", generateKey());
+            properties.addPropertie("privateKey", generateKey());
+            properties.addPropertie("lastModified", String.valueOf(new Date().getTime()));
+            return properties.save(FILE_NAME);
         }
+        return Boolean.TRUE;
     }
-
-    private String generateFile(File file, String fileName) throws IOException {
-        if (file.length() == 0 || new Date().getTime() > file.lastModified() + (1000L * 60 * 60 * 24 * 30) || !file.exists()) {
-            file.deleteOnExit();
-            file.createNewFile();
-            generateKey(fileName);
-        }
-        return fileName;
-    }
-
 
     private String generateKeyRecursive(Integer maxBit, Integer minBit, String key, String keyFinal) {
         if (ByteUtil.bitLength(key.getBytes().length) == maxBit) {
