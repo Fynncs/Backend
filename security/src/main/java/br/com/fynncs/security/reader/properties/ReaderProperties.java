@@ -5,7 +5,12 @@ import br.com.fynncs.security.reader.properties.interfaces.IReaderProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
 
@@ -15,7 +20,6 @@ public class ReaderProperties implements IReaderProperties {
     private Properties properties;
 
     private final Encryption encryption;
-
     @Autowired
     public ReaderProperties(Encryption encryption) {
         this.encryption = encryption;
@@ -23,18 +27,13 @@ public class ReaderProperties implements IReaderProperties {
 
     @Override
     public Properties read(String fileName) throws IOException {
-        InputStream fis;
-        File fileProperties = new File(fileName);
-        if (fileProperties.exists()) {
-            fis = new FileInputStream(fileProperties);
-        } else {
-            fis = getClass().getClassLoader().
-                    getResourceAsStream(fileName);
-        }
-        if (fis != null) {
+        String path = ReaderProperties.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        path = path.substring(1, path.indexOf("target"));
+        path += "src/main/resources/" + fileName;
+        path = URLDecoder.decode(path, StandardCharsets.UTF_8);
+        try (InputStream inputStream = new FileInputStream(path)) {
             properties = new Properties();
-            properties.load(fis);
-            fis.close();
+            properties.load(inputStream);
         }
         return properties;
     }
@@ -75,11 +74,16 @@ public class ReaderProperties implements IReaderProperties {
 
     public Boolean save(String fileName) throws Exception {
         propertiesIsNull();
-        try (FileWriter writer = new FileWriter(fileName)) {
+        String path = ReaderProperties.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        path = path.substring(1, path.indexOf("target"));
+        path += "src/main/resources/" + fileName;
+        path = URLDecoder.decode(path, StandardCharsets.UTF_8);
+        try (FileWriter writer = new FileWriter(path)) {
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 StringBuilder builder = new StringBuilder();
                 builder.append(entry.getKey()).append("=");
-                builder.append(encryption.encrypt((String) entry.getValue(), encryption.KEY)).append("\n");
+                builder.append("security.config.path".equalsIgnoreCase((String) entry.getKey()) ? (String) entry.getValue():
+                        encryption.encrypt((String) entry.getValue(), encryption.KEY)).append("\n");
                 writer.write(builder.toString());
             }
         } catch (Exception ex) {

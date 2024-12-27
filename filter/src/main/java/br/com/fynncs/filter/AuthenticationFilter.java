@@ -1,13 +1,17 @@
 package br.com.fynncs.filter;
 
+import br.com.fynncs.core.Encryption;
 import br.com.fynncs.filter.exception.MapperGenericException;
 import br.com.fynncs.security.model.Authentication;
+import br.com.fynncs.security.reader.properties.ReaderProperties;
 import br.com.fynncs.security.service.Security;
+import br.com.fynncs.security.token.TokenSecurity;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.core.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -52,7 +56,7 @@ public class AuthenticationFilter implements Filter {
 
                 Authentication authentication = null;
                 try {
-                    Security security = new Security();
+                    Security security = new Security(new TokenSecurity(new ReaderProperties(new Encryption())));
                     authentication = security.validateToken(authorization);
                 } catch (Exception e) {
                     throw new NotAuthorizedException("Error verifying token", e);
