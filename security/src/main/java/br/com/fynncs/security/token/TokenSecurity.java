@@ -28,7 +28,7 @@ public class TokenSecurity {
     private final AesKey privateKey;
     private final AesKey publicKey;
     private final ReaderProperties properties;
-    private final String FILE_NAME = "src/main/resources/application.properties";
+    private final String FILE_NAME = "application.properties";
 
     @Autowired
     public TokenSecurity(ReaderProperties properties) throws Exception {
