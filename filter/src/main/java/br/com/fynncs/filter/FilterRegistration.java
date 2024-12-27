@@ -1,4 +1,4 @@
-package br.com.fynncs.filtro;
+package br.com.fynncs.filter;
 
 import jakarta.servlet.DispatcherType;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
