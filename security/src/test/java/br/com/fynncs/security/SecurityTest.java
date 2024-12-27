@@ -1,17 +1,22 @@
 package br.com.fynncs.security;
 
 
-import br.com.fynncs.security.model.Authentication;
+import br.com.fynncs.core.Encryption;
+import br.com.fynncs.security.reader.properties.ReaderProperties;
 import br.com.fynncs.security.service.Security;
+import br.com.fynncs.security.token.TokenSecurity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 public class SecurityTest {
 
-    @Autowired
-    private Security security = new Security();
+
+    private final Security security;
+
+    public SecurityTest() throws Exception {
+        this.security = new Security(new TokenSecurity(new ReaderProperties(new Encryption())));
+    }
+
 
     @Test
     public void createTokenTest() throws Exception {
