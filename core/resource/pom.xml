@@ -46,6 +46,17 @@
             <version>3.4.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>br.com.fynncs</groupId>
+            <artifactId>reader</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -84,7 +95,7 @@
                 <configuration>
                     <testFailureIgnore>false</testFailureIgnore>
                     <includes>
-                        <include>br/com/fynncs/security/SecurityTest.java</include>
+                        <include>br/com/fynncs/*</include>
                     </includes>
                 </configuration>
             </plugin>
