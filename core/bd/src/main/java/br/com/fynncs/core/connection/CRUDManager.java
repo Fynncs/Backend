@@ -3,7 +3,6 @@ package br.com.fynncs.core.connection;
 import br.com.fynncs.core.comum.AssemblyStatement;
 import br.com.fynncs.core.enums.ConnectionProvider;
 import br.com.fynncs.core.interfaces.ICRUDManager;
-import br.com.fynncs.core.interfaces.ICUDManager;
 import br.com.fynncs.core.interfaces.IRowMapper;
 import br.com.fynncs.core.model.Resource;
 
