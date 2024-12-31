@@ -62,9 +62,9 @@ class CUDManager extends Connection implements ICUDManager {
             return 0;
         }
         try (PreparedStatement statement = prepareStatement(textSQL.toString())) {
-            int cont = 0;
+            int count = 0;
             for (Object value : values) {
-                AssemblyStatement.setStatement(value, statement, getConnection(), ++cont);
+                AssemblyStatement.setStatement(value, statement, getConnection(), ++count);
             }
             clearValues();
             return statement.executeUpdate();
