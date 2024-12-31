@@ -32,10 +32,7 @@ public class CRUDManager extends CUDManager implements ICRUDManager {
 
     @Override
     public <T> T queryObject(StringBuilder textSQL, List<Object> values, IRowMapper<T> rowMapper) throws SQLException {
-        try (PreparedStatement statement = prepareStatement(textSQL.toString())) {
-            assemblyStatement(statement, verifierObjectToArray(values, textSQL.toString()));
-            return createObject(statement.executeQuery(), rowMapper);
-        }
+        return queryObject(textSQL.toString(), values, rowMapper);
     }
 
     @Override
@@ -48,10 +45,7 @@ public class CRUDManager extends CUDManager implements ICRUDManager {
 
     @Override
     public <T> T queryObject(StringBuilder textSQL, Object value, IRowMapper<T> rowMapper) throws SQLException {
-        try (PreparedStatement statement = prepareStatement(textSQL.toString())) {
-            assemblyStatement(statement, verifierObjectToArray(value, textSQL.toString()));
-            return createObject(statement.executeQuery(), rowMapper);
-        }
+        return queryObject(textSQL.toString(), value, rowMapper);
     }
 
     @Override
@@ -64,10 +58,7 @@ public class CRUDManager extends CUDManager implements ICRUDManager {
 
     @Override
     public <T> List<T> queryList(StringBuilder textSQL, List<Object> values, IRowMapper<T> rowMapper) throws SQLException {
-        try (PreparedStatement statement = prepareStatement(textSQL.toString())) {
-            assemblyStatement(statement, verifierObjectToArray(values, textSQL.toString()));
-            return createList(statement.executeQuery(), rowMapper);
-        }
+        return queryList(textSQL.toString(), values, rowMapper);
     }
 
     @Override
@@ -80,10 +71,7 @@ public class CRUDManager extends CUDManager implements ICRUDManager {
 
     @Override
     public <T> List<T> queryList(StringBuilder textSQL, Object value, IRowMapper<T> rowMapper) throws SQLException {
-        try (PreparedStatement statement = prepareStatement(textSQL.toString())) {
-            assemblyStatement(statement, verifierObjectToArray(value, textSQL.toString()));
-            return createList(statement.executeQuery(), rowMapper);
-        }
+        return queryList(textSQL.toString(), value, rowMapper);
     }
 
     private void assemblyStatement(PreparedStatement statement, List<Object> values) throws SQLException {

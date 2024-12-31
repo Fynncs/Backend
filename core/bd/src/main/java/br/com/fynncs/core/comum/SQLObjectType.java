@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-abstract class SQLObjectType {
+public abstract class SQLObjectType {
 
     private static Map<Class<?>, Integer> createMap() {
         Map<Class<?>, Integer> map = new HashMap<>(Map.of(String.class, 0, Number.class, 1,
