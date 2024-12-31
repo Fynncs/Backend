@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class FilterRegistration {
 
     @Bean
-    public FilterRegistrationBean<AuthenticationFilter> filterRegister(){
+    public FilterRegistrationBean<AuthenticationFilter> filterRegister() {
         FilterRegistrationBean<AuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new AuthenticationFilter());
         registrationBean.addUrlPatterns("/api/*");
