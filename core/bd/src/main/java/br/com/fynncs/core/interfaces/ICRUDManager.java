@@ -3,7 +3,7 @@ package br.com.fynncs.core.interfaces;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface ICRUDManager {
+public interface ICRUDManager extends ICUDManager{
     <T> T queryObject(String textSQL, List<Object> values, IRowMapper<T> rowMapper) throws SQLException;
 
     <T> T queryObject(StringBuilder textSQL, List<Object> values, IRowMapper<T> rowMapper) throws SQLException;
