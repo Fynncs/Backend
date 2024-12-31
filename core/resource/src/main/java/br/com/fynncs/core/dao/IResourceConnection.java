@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface IResourceConnection {
 
     Resource findResourceById(String id, ResourceType type) throws SQLException;
+
     List<Resource> findListByType(Optional<ResourceType> type) throws SQLException;
 }

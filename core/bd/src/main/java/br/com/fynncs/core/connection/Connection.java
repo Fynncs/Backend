@@ -16,18 +16,125 @@ class Connection implements java.sql.Connection {
     public Connection() {
     }
 
-    public Connection(Resource resource, ConnectionProvider provider) throws Exception {
-        driverInstace(provider);
-        connection = DriverManager.getConnection(resource.getInfo().get(environment()));
+    public Connection(Resource resource, ConnectionProvider provider, String dataBase) throws Exception {
+        driverInstance(provider);
+        connection = DriverManager.getConnection(resource.getInfo().get(environment()).concat(dataBase));
     }
 
-    private static void driverInstace(ConnectionProvider provider) throws Exception {
+    private static void driverInstance(ConnectionProvider provider) throws Exception {
         switch (provider) {
             case POSTGRES -> {
                 Class.forName("org.postgresql.Driver").newInstance();
             }
             default -> throw new InstantiationException("Error when instantiating!");
         }
+    }
+
+    public static boolean hasTable(ConnectionProvider provider, Connection connection, String tableName) throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            return false;
+        }
+
+        if (provider == null) {
+            provider = ConnectionProvider.POSTGRES;
+        }
+
+        boolean exists = false;
+
+        switch (provider) {
+            case POSTGRES -> {
+                try (PreparedStatement statement = connection.prepareStatement(
+                        "SELECT to_regclass(?)")) {
+                    statement.setString(1, tableName);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        if (resultSet.next()) {
+                            resultSet.getString(1);
+                            if (!resultSet.wasNull()) {
+                                exists = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return exists;
+    }
+
+    public static boolean hasColumn(ConnectionProvider provider, Connection connection,
+                                    String tableName, String columnName) throws SQLException {
+        if (connection == null || connection.isClosed()
+                || tableName == null || tableName.trim().isEmpty()
+                || columnName == null || columnName.trim().isEmpty()) {
+            return false;
+        }
+
+        String[] names = tableName.split("\\.");
+
+        String schemaName = null;
+        if (names.length > 0) {
+            schemaName = names[0];
+        }
+
+        if (names.length > 1) {
+            tableName = names[1];
+        }
+
+        return hasColumn(provider, connection, schemaName, tableName, columnName);
+    }
+
+    public static boolean hasColumn(ConnectionProvider provider, Connection connection,
+                                    String schemaName, String tableName, String columnName) throws SQLException {
+        if (connection == null || connection.isClosed()
+                || schemaName == null || schemaName.isBlank()
+                || tableName == null || tableName.isBlank()
+                || columnName == null || columnName.isBlank()) {
+            return false;
+        }
+
+        schemaName = schemaName.trim();
+        tableName = tableName.trim();
+        columnName = columnName.trim();
+
+        if (provider == null) {
+            provider = ConnectionProvider.POSTGRES;
+        }
+
+        boolean exists = false;
+
+        switch (provider) {
+            case POSTGRES -> {
+                try (PreparedStatement statement = connection.prepareStatement(
+                        "SELECT column_name"
+                                + " FROM information_schema.columns"
+                                + " WHERE table_catalog = ?"
+                                + " AND table_schema = ?"
+                                + " AND table_name = ?"
+                                + " AND column_name = ?;")) {
+                    statement.setString(1, connection.getCatalog());
+                    statement.setString(2, schemaName);
+                    statement.setString(3, tableName);
+                    statement.setString(4, columnName);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        if (resultSet.next()) {
+                            resultSet.getString(1);
+                            if (!resultSet.wasNull()) {
+                                exists = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return exists;
+    }
+
+    public static boolean hasColumn(ResultSet resultSet, String columnName) throws SQLException {
+        try {
+            resultSet.findColumn(columnName);
+            return true;
+        } catch (SQLException ignored) {
+        }
+        return false;
     }
 
     public java.sql.Connection getConnection() {
@@ -38,6 +145,56 @@ class Connection implements java.sql.Connection {
         ReaderProperties readerProperties = new ReaderProperties();
         readerProperties.read("src/main/resources/application.properties");
         return readerProperties.getSpecificProperties("environment");
+    }
+
+    public void startTransaction() throws SQLException {
+        connection.setAutoCommit(false);
+    }
+
+    public void commitTransaction() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
+            connection.commit();
+            connection.setAutoCommit(true);
+        }
+    }
+
+    public void revertTransaction() throws SQLException {
+        if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) {
+            connection.rollback();
+            connection.setAutoCommit(true);
+        }
+    }
+
+    public boolean inTransaction() throws SQLException {
+        return !connection.getAutoCommit();
+    }
+
+    public boolean hasDataBase(String dataBaseName, ConnectionProvider provider) throws Exception {
+        if (connection == null || connection.isClosed()) {
+            return false;
+        }
+
+        boolean exists = false;
+
+        switch (provider) {
+            case POSTGRES -> {
+                try (PreparedStatement statement = connection.prepareStatement(
+                        "SELECT 1 from pg_database WHERE datname=?")) {
+                    statement.setString(1, dataBaseName);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        int result;
+                        if (resultSet.next()) {
+                            result = resultSet.getInt(1);
+                            if (result == 1) {
+                                exists = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return exists;
     }
 
     @Override
@@ -82,7 +239,12 @@ class Connection implements java.sql.Connection {
 
     @Override
     public void close() throws SQLException {
-        connection.close();
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException ignored) {
+        }
     }
 
     @Override

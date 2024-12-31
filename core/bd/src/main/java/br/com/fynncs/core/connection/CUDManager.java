@@ -31,8 +31,8 @@ class CUDManager extends Connection implements ICUDManager {
     public CUDManager() {
     }
 
-    public CUDManager(Resource resource, ConnectionProvider provider) throws Exception {
-        super(resource, provider);
+    public CUDManager(Resource resource, ConnectionProvider provider, String dataBase) throws Exception {
+        super(resource, provider, dataBase);
     }
 
     public void clearValues() {

@@ -18,8 +18,8 @@ public class CRUDManager extends CUDManager implements ICRUDManager {
     public CRUDManager() {
     }
 
-    public CRUDManager(Resource resource, ConnectionProvider provider) throws Exception {
-        super(resource, provider);
+    public CRUDManager(Resource resource, ConnectionProvider provider, String dataBase) throws Exception {
+        super(resource, provider, dataBase);
     }
 
     @Override

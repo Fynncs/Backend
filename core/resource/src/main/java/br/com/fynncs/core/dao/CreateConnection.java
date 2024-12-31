@@ -9,21 +9,21 @@ import java.util.Map;
 
 public abstract class CreateConnection {
 
-    private static Map<ConnectionProvider, Boolean> driverInstaced = new HashMap<>();
+    private static final Map<ConnectionProvider, Boolean> driverInstantiated = new HashMap<>();
 
-    private static void driverInstace(ConnectionProvider provider) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        if (driverInstaced.getOrDefault(provider, Boolean.FALSE)) return;
+    private static void driverInstance(ConnectionProvider provider) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        if (driverInstantiated.getOrDefault(provider, Boolean.FALSE)) return;
         switch (provider) {
             case POSTGRES -> {
                 Class.forName("org.postgresql.Driver").newInstance();
-                driverInstaced.put(provider, Boolean.TRUE);
+                driverInstantiated.put(provider, Boolean.TRUE);
             }
             default -> throw new InstantiationException("Error when instantiating!");
         }
     }
 
     public static IResourceConnection createResourceConnection(String urlConnection, ConnectionProvider provider) throws Exception {
-        driverInstace(provider);
+        driverInstance(provider);
         switch (provider) {
             case POSTGRES -> {
                 return new ResourceConnection(DriverManager.getConnection(urlConnection));

@@ -18,22 +18,22 @@ public class ResourceService {
     private IResourceConnection resourceConnection;
 
     public ResourceService(ConnectionProvider provider) throws Exception {
-        inicializer(getUrlConnection(provider), provider);
+        initializer(getUrlConnection(provider), provider);
     }
 
     public ResourceService(String urlConnection, ConnectionProvider provider) throws Exception {
-        if(urlConnection == null || urlConnection.isBlank()){
+        if (urlConnection == null || urlConnection.isBlank()) {
             urlConnection = getUrlConnection(provider);
         }
-        inicializer(urlConnection, provider);
+        initializer(urlConnection, provider);
     }
 
-    private void inicializer(String urlConnection, ConnectionProvider provider) throws Exception {
+    private void initializer(String urlConnection, ConnectionProvider provider) throws Exception {
         this.resourceConnection = CreateConnection.createResourceConnection(urlConnection, provider);
     }
 
     private String getUrlConnection(ConnectionProvider provider) throws Exception {
-        switch (provider){
+        switch (provider) {
             case POSTGRES -> {
                 ReaderEncryptedProperties properties = new ReaderEncryptedProperties();
                 properties.read("src/main/resources/application.properties");
