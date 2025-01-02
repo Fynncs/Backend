@@ -84,7 +84,7 @@ public class ResultProcessing {
         }
     }
 
-    public void addDatail(Throwable causeDatail){
+    public void addDatail(Throwable causeDatail) {
         while (causeDatail != null) {
             addDatail(causeDatail.getMessage(), null,
                     null, (causeDatail.getStackTrace() != null &&
@@ -99,7 +99,7 @@ public class ResultProcessing {
     }
 
     public void addDatail(String message, String correction,
-                                 String associatedProperty, String infoDeveloper) {
+                          String associatedProperty, String infoDeveloper) {
         ResultProcessingDetail datail
                 = new ResultProcessingDetail();
         datail.setMessage(message);

@@ -1,17 +1,13 @@
 package br.com.fynncs.filter;
 
-import br.com.fynncs.core.Encryption;
 import br.com.fynncs.filter.exception.MapperGenericException;
 import br.com.fynncs.security.model.Authentication;
-import br.com.fynncs.security.reader.properties.ReaderProperties;
 import br.com.fynncs.security.service.Security;
-import br.com.fynncs.security.token.TokenSecurity;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.core.HttpHeaders;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -26,11 +22,10 @@ public class AuthenticationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        try{
+        try {
             if (request.getMethod().equals("OPTIONS")) {
                 HttpServletResponse resp = ((HttpServletResponse) servletResponse);
                 resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-                return;
             } else if (request.getMethod() != null && (request.getMethod().equals("GET")
                     || request.getMethod().equals("POST")
                     || request.getMethod().equals("PUT")
@@ -54,27 +49,34 @@ public class AuthenticationFilter implements Filter {
                             new Throwable("Uninformed authorization to use the service."), this);
                 }
 
-                Authentication authentication = null;
-                try {
-                    Security security = new Security(new TokenSecurity(new ReaderProperties(new Encryption())));
-                    authentication = security.validateToken(authorization);
-                } catch (Exception e) {
-                    throw new NotAuthorizedException("Error verifying token", e);
+                if (!request.getRequestURL().toString().contains("login")) {
+                    Authentication authentication = getAuthentication(authorization);
+                    modifierRequestContext(servletRequest, authentication);
                 }
-
-                if (authentication == null) {
-                    throw new NotAuthorizedException("Invalid authorization to use the service.");
-                }
-                modifierRequestContext(servletRequest, authentication);
                 filterChain.doFilter(request, servletResponse);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             MapperGenericException.errorResponse((HttpServletResponse) servletResponse, ex);
         }
     }
 
+    private static Authentication getAuthentication(String authorization) {
+        Authentication authentication = null;
+        try {
+            Security security = new Security();
+            authentication = security.validateToken(authorization);
+        } catch (Exception e) {
+            throw new NotAuthorizedException("Error verifying token", e);
+        }
+
+        if (authentication == null) {
+            throw new NotAuthorizedException("Invalid authorization to use the service.");
+        }
+        return authentication;
+    }
+
     private void modifierRequestContext(ServletRequest servletRequest,
-                                         Authentication authentication) {
+                                        Authentication authentication) {
         servletRequest.setAttribute("userPrincipal", (Principal) authentication::serializer);
     }
 }

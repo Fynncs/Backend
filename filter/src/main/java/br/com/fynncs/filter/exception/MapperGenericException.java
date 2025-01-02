@@ -1,4 +1,3 @@
-
 package br.com.fynncs.filter.exception;
 
 import br.com.fynncs.filter.exception.model.ResultProcessing;
@@ -40,7 +39,7 @@ public abstract class MapperGenericException {
         ));
     }
 
-    private static GenericEntity<ResultProcessing> genericEntity(Response.StatusType type, Exception ex){
+    private static GenericEntity<ResultProcessing> genericEntity(Response.StatusType type, Exception ex) {
         ResultProcessing resultProcessing
                 = new ResultProcessing(String.valueOf(type.getStatusCode()),
                 ex.getMessage(), ex);
@@ -57,7 +56,8 @@ public abstract class MapperGenericException {
             }
         }
 
-        return new GenericEntity<ResultProcessing>(resultProcessing) {};
+        return new GenericEntity<ResultProcessing>(resultProcessing) {
+        };
     }
 
     private static Response.StatusType getStatusType(Throwable ex) {

@@ -8,11 +8,10 @@
         <version>3.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>br.com.fynncs</groupId>
-    <artifactId>security</artifactId>
+    <groupId>br.com.fynncs.core</groupId>
+    <artifactId>bd</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>security</name>
-    <description>Demo project for Spring Boot</description>
+    <name>bd</name>
     <url/>
     <licenses>
         <license/>
@@ -31,40 +30,14 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.18.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.18.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.18.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.bitbucket.b_c</groupId>
-            <artifactId>jose4j</artifactId>
-            <version>0.9.4</version>
-        </dependency>
-         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.11.3</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>br.com.fynncs.core</groupId>
-            <artifactId>encryption</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -73,16 +46,26 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>br.com.fynncs</groupId>
-            <artifactId>reader</artifactId>
+            <groupId>br.com.fynncs.core</groupId>
+            <artifactId>resource</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>br.com.fynncs.core</groupId>
+            <artifactId>model</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <finalName>security</finalName>
+        <finalName>bd</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -117,11 +100,10 @@
                 <configuration>
                     <testFailureIgnore>false</testFailureIgnore>
                     <includes>
-                        <include>br/com/fynncs/security/SecurityTest.java</include>
+                        <include>br/com/fynncs/*</include>
                     </includes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

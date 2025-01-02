@@ -1,21 +1,13 @@
 package br.com.fynncs.security;
 
 
-import br.com.fynncs.core.Encryption;
-import br.com.fynncs.security.reader.properties.ReaderProperties;
 import br.com.fynncs.security.service.Security;
-import br.com.fynncs.security.token.TokenSecurity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class SecurityTest {
 
-
-    private final Security security;
-
-    public SecurityTest() throws Exception {
-        this.security = new Security(new TokenSecurity(new ReaderProperties(new Encryption())));
-    }
+    private Security security = new Security();
 
 
     @Test
