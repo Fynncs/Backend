@@ -24,7 +24,6 @@ public abstract class ResourceService {
         switch (provider) {
             case POSTGRES -> {
                 ReaderEncryptedProperties properties = new ReaderEncryptedProperties();
-                ;
                 properties.read(properties.path("application.properties", ResourceService.class));
                 return properties.getSpecificPropertiesDecrypt("data-base.postgres.url.connection");
             }
