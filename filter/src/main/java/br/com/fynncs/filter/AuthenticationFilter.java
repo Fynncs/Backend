@@ -44,12 +44,11 @@ public class AuthenticationFilter implements Filter {
                 HttpServletResponse resp = (HttpServletResponse) servletResponse;
 
                 String authorization = ((HttpServletRequest) servletRequest).getHeader(HttpHeaders.AUTHORIZATION);
-                if (authorization == null || !authorization.startsWith("Bearer ")) {
-                    throw new NotAuthorizedException("Unauthorized",
-                            new Throwable("Uninformed authorization to use the service."), this);
-                }
-
                 if (!request.getRequestURL().toString().contains("login")) {
+                    if (authorization == null || !authorization.startsWith("Bearer ")) {
+                        throw new NotAuthorizedException("Unauthorized",
+                                new Throwable("Uninformed authorization to use the service."), this);
+                    }
                     Authentication authentication = getAuthentication(authorization);
                     modifierRequestContext(servletRequest, authentication);
                 }

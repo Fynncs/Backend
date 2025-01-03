@@ -29,7 +29,7 @@ public class ResourceConnection implements IResourceConnection {
         textSQL.append("description, ");
         textSQL.append("info");
         additionalFields.ifPresent(x -> textSQL.append(", ").append(x.parallelStream().collect(Collectors.joining(", "))));
-        textSQL.append(" from general.resource rc ");
+        textSQL.append(" from parameter.resource rc ");
         return textSQL;
     }
 

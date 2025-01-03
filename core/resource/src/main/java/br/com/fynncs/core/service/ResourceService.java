@@ -8,35 +8,23 @@ import br.com.fynncs.core.model.Resource;
 import br.com.fynncs.services.ReaderEncryptedProperties;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ResourceService {
+public abstract class ResourceService {
 
-    private IResourceConnection resourceConnection;
+    private static IResourceConnection resourceConnection;
 
-    public ResourceService(ConnectionProvider provider) throws Exception {
-        initializer(getUrlConnection(provider), provider);
+    private static void initializer(String urlConnection, ConnectionProvider provider) throws Exception {
+        resourceConnection = CreateConnection.createResourceConnection(urlConnection, provider);
     }
 
-    public ResourceService(String urlConnection, ConnectionProvider provider) throws Exception {
-        if (urlConnection == null || urlConnection.isBlank()) {
-            urlConnection = getUrlConnection(provider);
-        }
-        initializer(urlConnection, provider);
-    }
-
-    private void initializer(String urlConnection, ConnectionProvider provider) throws Exception {
-        this.resourceConnection = CreateConnection.createResourceConnection(urlConnection, provider);
-    }
-
-    private String getUrlConnection(ConnectionProvider provider) throws Exception {
+    private static String getUrlConnection(ConnectionProvider provider) throws Exception {
         switch (provider) {
             case POSTGRES -> {
                 ReaderEncryptedProperties properties = new ReaderEncryptedProperties();
-                properties.read("src/main/resources/application.properties");
+                properties.read(properties.path("application.properties", ResourceService.class));
                 return properties.getSpecificPropertiesDecrypt("data-base.postgres.url.connection");
             }
             default -> {
@@ -45,11 +33,29 @@ public class ResourceService {
         }
     }
 
-    public Resource findResourceById(String id, ResourceType type) throws SQLException {
+    public static Resource findResourceById(ConnectionProvider provider, String id, ResourceType type) throws Exception {
+        initializer(getUrlConnection(provider), provider);
         return resourceConnection.findResourceById(id, type);
     }
 
-    public List<Resource> findListByType(ResourceType type) throws SQLException {
+    public static List<Resource> findListByType(ConnectionProvider provider, ResourceType type) throws Exception {
+        initializer(getUrlConnection(provider), provider);
+        return resourceConnection.findListByType(Optional.of(type));
+    }
+
+    public static Resource findResourceById(String urlConnection, ConnectionProvider provider, String id, ResourceType type) throws Exception {
+        if (urlConnection == null || urlConnection.isBlank()) {
+            urlConnection = getUrlConnection(provider);
+        }
+        initializer(urlConnection, provider);
+        return resourceConnection.findResourceById(id, type);
+    }
+
+    public static List<Resource> findListByType(String urlConnection, ConnectionProvider provider, ResourceType type) throws Exception {
+        if (urlConnection == null || urlConnection.isBlank()) {
+            urlConnection = getUrlConnection(provider);
+        }
+        initializer(urlConnection, provider);
         return resourceConnection.findListByType(Optional.of(type));
     }
 }

@@ -12,13 +12,21 @@ import java.util.concurrent.Executor;
 class Connection implements java.sql.Connection {
 
     private java.sql.Connection connection;
+    private ConnectionProvider provider;
 
     public Connection() {
     }
 
+    public Connection(Resource resource, ConnectionProvider provider) throws Exception {
+        driverInstance(provider);
+        this.provider = provider;
+        connection = DriverManager.getConnection(connectionText(resource.getInfo().get(environment()), null));
+    }
+
     public Connection(Resource resource, ConnectionProvider provider, String dataBase) throws Exception {
         driverInstance(provider);
-        connection = DriverManager.getConnection(resource.getInfo().get(environment()).concat(dataBase));
+        this.provider = provider;
+        connection = DriverManager.getConnection(connectionText(resource.getInfo().get(environment()), dataBase));
     }
 
     private static void driverInstance(ConnectionProvider provider) throws Exception {
@@ -137,13 +145,36 @@ class Connection implements java.sql.Connection {
         return false;
     }
 
+    private String connectionText(
+            String connectionText, String dataBaseName) {
+        if (connectionText != null && !connectionText.isEmpty()
+                && dataBaseName != null && !dataBaseName.isEmpty()) {
+            int pos1 = connectionText.lastIndexOf("/");
+            int pos2 = connectionText.lastIndexOf("?");
+            if (pos2 == -1) {
+                pos2 = connectionText.length();
+            }
+
+            if (pos1 != -1 && pos2 != -1 && pos2 > pos1) {
+                connectionText = connectionText.substring(0, pos1 + 1)
+                        + dataBaseName
+                        + connectionText.substring(pos2);
+            }
+        }
+        return connectionText;
+    }
+
+    public ConnectionProvider getProvider() {
+        return provider;
+    }
+
     public java.sql.Connection getConnection() {
         return connection;
     }
 
     private String environment() throws Exception {
         ReaderProperties readerProperties = new ReaderProperties();
-        readerProperties.read("src/main/resources/application.properties");
+        readerProperties.read(readerProperties.path("application.properties", Connection.class));
         return readerProperties.getSpecificProperties("environment");
     }
 
