@@ -14,7 +14,7 @@ public class ReaderProperties extends Reader implements IReaderProperties {
 
     @Override
     public InputStream read(String fileName) throws Exception {
-        try(InputStream inputStream = new FileInputStream(fileName)) {
+        try (InputStream inputStream = new FileInputStream(fileName)) {
             properties = new Properties();
             properties.load(inputStream);
             return inputStream;
@@ -23,8 +23,8 @@ public class ReaderProperties extends Reader implements IReaderProperties {
 
     @Override
     public Boolean save(String fileName, Properties properties) {
-        try(FileWriter writer = new FileWriter(fileName)) {
-            for(Map.Entry<Object, Object> entry: properties.entrySet()){
+        try (FileWriter writer = new FileWriter(fileName)) {
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 StringBuffer buffer = new StringBuffer();
                 buffer.append(entry.getKey()).append("=");
                 buffer.append(entry.getValue()).append("\n");

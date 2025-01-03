@@ -2,7 +2,6 @@ package br.com.fynncs.services;
 
 import br.com.fynncs.core.Encryption;
 import br.com.fynncs.interfaces.IReaderEncryptedProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -14,7 +13,7 @@ import java.util.Properties;
 @Service
 public class ReaderEncryptedProperties extends ReaderProperties implements IReaderEncryptedProperties {
 
-    private Encryption encryption =  new Encryption();
+    private Encryption encryption = new Encryption();
 
     public ReaderEncryptedProperties() {
         super();
@@ -22,7 +21,7 @@ public class ReaderEncryptedProperties extends ReaderProperties implements IRead
 
     @Override
     public InputStream read(String fileName) throws Exception {
-        try(InputStream inputStream = new FileInputStream(fileName)) {
+        try (InputStream inputStream = new FileInputStream(fileName)) {
             setProperties(new Properties());
             getProperties().load(inputStream);
             return inputStream;
@@ -31,14 +30,14 @@ public class ReaderEncryptedProperties extends ReaderProperties implements IRead
 
     @Override
     public Boolean save(String fileName, Properties properties) {
-        try(FileWriter writer = new FileWriter(fileName)) {
-            for(Map.Entry<Object, Object> entry: properties.entrySet()){
+        try (FileWriter writer = new FileWriter(fileName)) {
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 StringBuffer buffer = new StringBuffer();
                 buffer.append(entry.getKey()).append("=");
                 try {
                     encryption.decrypt((String) entry.getValue(), encryption.KEY);
                     buffer.append(entry.getValue());
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     buffer.append(encryption.encrypt((String) entry.getValue(), encryption.KEY));
                 }
                 buffer.append("\n");

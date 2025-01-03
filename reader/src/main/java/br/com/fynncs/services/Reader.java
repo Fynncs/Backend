@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
@@ -44,6 +46,15 @@ public class Reader implements IReader {
 
     private void save(FileWriter writer, String value) throws IOException {
         writer.write(value);
+    }
+
+    public String path(String fileName, Class<?> clazz) {
+        StringBuffer buffer = new StringBuffer();
+        String path = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+        buffer.append(URLDecoder.decode(path.substring(1, path.indexOf("target")), StandardCharsets.UTF_8));
+        buffer.append("src/main/resources/");
+        buffer.append(fileName);
+        return buffer.toString();
     }
 
 }
