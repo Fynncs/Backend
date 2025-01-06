@@ -38,6 +38,11 @@ public abstract class ResourceService {
         return resourceConnection.findResourceById(id, type);
     }
 
+    public static Resource findResourceById(ConnectionProvider provider) throws Exception {
+        initializer(getUrlConnection(provider), provider);
+        return resourceConnection.findResourceById("STANDARD", ResourceType.DATABASECONNECTION);
+    }
+
     public static List<Resource> findListByType(ConnectionProvider provider, ResourceType type) throws Exception {
         initializer(getUrlConnection(provider), provider);
         return resourceConnection.findListByType(Optional.of(type));

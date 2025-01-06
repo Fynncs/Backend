@@ -9,6 +9,8 @@ import java.io.Serializable;
 public class Authentication implements Serializable {
 
     private String identifier;
+    private String dataBaseName;
+    private String connectionProvider;
     private String token;
 
     public Authentication() {
@@ -37,6 +39,22 @@ public class Authentication implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getDataBaseName() {
+        return dataBaseName;
+    }
+
+    public void setDataBaseName(String dataBaseName) {
+        this.dataBaseName = dataBaseName;
+    }
+
+    public String getConnectionProvider() {
+        return connectionProvider;
+    }
+
+    public void setConnectionProvider(String connectionProvider) {
+        this.connectionProvider = connectionProvider;
     }
 
     public String serializer() {
