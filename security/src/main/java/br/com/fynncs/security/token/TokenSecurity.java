@@ -30,16 +30,13 @@ public class TokenSecurity {
     private final AesKey privateKey;
     private final AesKey publicKey;
     private final ReaderEncryptedProperties properties;
-    private String FILE_NAME = "src/main/resources/application.properties";
+    private String FILE_NAME = "application.properties";
 
     @Autowired
     public TokenSecurity() throws Exception {
         this.properties = new ReaderEncryptedProperties();
-        String path = TokenSecurity.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        path = path.substring(1, path.indexOf("target"));
-        path += FILE_NAME;
-        FILE_NAME = URLDecoder.decode(path, StandardCharsets.UTF_8);
-        properties.read(FILE_NAME);
+        StringBuffer buffer = new StringBuffer(properties.path(FILE_NAME, TokenSecurity.class));
+        properties.read(buffer.toString());
         if(!createProperties()){
             throw new Exception("Create Properties error!");
         }
@@ -65,6 +62,8 @@ public class TokenSecurity {
             //claims.setNotBeforeMinutesInThePast(2); // time before which the token is not yet valid (2 minutes ago)
             claims.setSubject("authentication");
             claims.setClaim("identifier", authentication.getIdentifier());
+            claims.setClaim("dataBaseName", authentication.getDataBaseName());
+            claims.setClaim("connectionProvider", authentication.getConnectionProvider());
             JsonWebSignature jws = new JsonWebSignature();
             jws.setPayload(claims.toJson());
             jws.setKey(privateKey);
@@ -112,6 +111,8 @@ public class TokenSecurity {
             JwtClaims jwtClaims = jwtConsumer.processToClaims(token);
             Authentication authentication = new Authentication();
             authentication.setIdentifier(jwtClaims.getClaimValue("identifier", String.class));
+            authentication.setDataBaseName(jwtClaims.getClaimValue("dataBaseName", String.class));
+            authentication.setConnectionProvider(jwtClaims.getClaimValue("connectionProvider", String.class));
             authentication.setToken(token);
             return authentication;
         } catch (InvalidJwtException e) {
