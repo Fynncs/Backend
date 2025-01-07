@@ -2,13 +2,13 @@
 
 ### Extenção nescessaria
 
-Para começar crie um banco de dados e adiciona a extenção hstore:
+Para começar crie o banco de dados general e adiciona a extenção hstore:
 
 ```roomsql
 CREATE EXTENSION hstore SCHEMA "public" VERSION 1.8;
 ```
 
-### Schema general
+### Schema parameter
 
 ```roomsql
 CREATE SCHEMA parameter AUTHORIZATION postgres;
