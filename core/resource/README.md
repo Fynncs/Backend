@@ -5,7 +5,7 @@
 Para começar crie o banco de dados general e adiciona a extenção hstore:
 
 ```roomsql
-CREATE EXTENSION hstore SCHEMA "public" VERSION 1.8;
+CREATE EXTENSION hstore SCHEMA "public";
 ```
 
 ### Schema parameter
