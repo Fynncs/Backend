@@ -26,4 +26,5 @@ CREATE TABLE parameter.resource (
 );
 CREATE INDEX resource_id_idx ON parameter.resource USING btree (id);
 CREATE INDEX resource_type_idx ON parameter.resource USING btree (type);
+ALTER TABLE parameter.resource ADD CONSTRAINT resource_check CHECK (type in ('URLWEB','DATABASECONNECTION','LINK'));
 ```
