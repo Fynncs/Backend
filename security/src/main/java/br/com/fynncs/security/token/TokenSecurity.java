@@ -18,8 +18,6 @@ import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Properties;
@@ -37,7 +35,7 @@ public class TokenSecurity {
         this.properties = new ReaderEncryptedProperties();
         StringBuffer buffer = new StringBuffer(properties.path(FILE_NAME, TokenSecurity.class));
         properties.read(buffer.toString());
-        if(!createProperties()){
+        if (!createProperties()) {
             throw new Exception("Create Properties error!");
         }
         privateKey = new AesKey(properties.getSpecificPropertiesDecrypt("privateKey").getBytes());
@@ -129,12 +127,12 @@ public class TokenSecurity {
     }
 
     private Boolean createProperties() throws Exception {
-        if(properties.getProperties() == null
+        if (properties.getProperties() == null
                 || !properties.containsProperties("privateKey")
                 || !properties.containsProperties("publicKey")
                 || !properties.containsProperties("lastModified")
                 || new Date().getTime() > new Date(Long.parseLong(
-                        properties.getSpecificPropertiesDecrypt("lastModified"))).getTime() + (1000L * 60 * 60 * 24 * 30)){
+                properties.getSpecificPropertiesDecrypt("lastModified"))).getTime() + (1000L * 60 * 60 * 24 * 30)) {
             properties.setProperties(new Properties());
             properties.addEncryptProperties("publicKey", generateKey());
             properties.addEncryptProperties("privateKey", generateKey());

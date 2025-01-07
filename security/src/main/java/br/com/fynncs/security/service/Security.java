@@ -17,8 +17,7 @@ public class Security {
         }
     }
 
-    public String createToken(String id, Integer timeToken) {
-        Authentication authentication = new Authentication(id);
+    public String createToken(Authentication authentication, Integer timeToken) {
         return tokenSecurity.createToken(authentication, timeToken);
     }
 

@@ -25,6 +25,16 @@ public class Authentication implements Serializable {
         this.token = token;
     }
 
+    public static Authentication deserialize(String text) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper().
+                    setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            return objectMapper.readValue(text, Authentication.class);
+        } catch (JsonProcessingException ex) {
+            return null;
+        }
+    }
+
     public String getIdentifier() {
         return identifier;
     }
@@ -63,16 +73,6 @@ public class Authentication implements Serializable {
                     new ObjectMapper().
                             setSerializationInclusion(JsonInclude.Include.NON_NULL);
             return objectMapper.writeValueAsString(this);
-        } catch (JsonProcessingException ex) {
-            return null;
-        }
-    }
-
-    public static Authentication deserialize(String text) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper().
-                    setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            return objectMapper.readValue(text, Authentication.class);
         } catch (JsonProcessingException ex) {
             return null;
         }
