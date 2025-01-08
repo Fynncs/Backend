@@ -27,6 +27,12 @@ public class ReaderProperties extends Reader implements IReaderProperties {
     }
 
     @Override
+    public void read(InputStream inputStream) throws Exception {
+        setProperties(new Properties());
+        getProperties().load(inputStream);
+    }
+
+    @Override
     public Boolean save(String fileName, Properties properties) {
         try (FileWriter writer = new FileWriter(fileName)) {
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {

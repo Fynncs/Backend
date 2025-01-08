@@ -23,6 +23,11 @@ public class Reader implements IReader {
     }
 
     @Override
+    public void read(InputStream inputStream) throws Exception {
+        throw new Exception("Method not implemented");
+    }
+
+    @Override
     public Boolean save(String fileName, String value) {
         try (FileWriter writer = new FileWriter(fileName)) {
             writer.write(value);
@@ -51,6 +56,7 @@ public class Reader implements IReader {
     public String path(String fileName, Class<?> clazz) {
         StringBuffer buffer = new StringBuffer();
         String path = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+        System.out.println(path);
         buffer.append(URLDecoder.decode(path.substring(1, path.indexOf("target")), StandardCharsets.UTF_8));
         buffer.append("src/main/resources/");
         buffer.append(fileName);
