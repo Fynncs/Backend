@@ -2,6 +2,7 @@ package br.com.fynncs.services;
 
 import br.com.fynncs.core.Encryption;
 import br.com.fynncs.interfaces.IReaderEncryptedProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -14,7 +15,8 @@ import java.util.Properties;
 @Service
 public class ReaderEncryptedProperties extends ReaderProperties implements IReaderEncryptedProperties {
 
-    private final Encryption encryption = new Encryption();
+    @Autowired
+    private Encryption encryption;
 
     public ReaderEncryptedProperties() {
         super();
