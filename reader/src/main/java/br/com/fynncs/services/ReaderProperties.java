@@ -4,6 +4,7 @@ import br.com.fynncs.interfaces.IReaderProperties;
 
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
@@ -14,11 +15,21 @@ public class ReaderProperties extends Reader implements IReaderProperties {
 
     @Override
     public InputStream read(String fileName) throws Exception {
-        try (InputStream inputStream = new FileInputStream(fileName)) {
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(fileName);
             properties = new Properties();
             properties.load(inputStream);
             return inputStream;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void read(InputStream inputStream) throws Exception {
+        setProperties(new Properties());
+        getProperties().load(inputStream);
     }
 
     @Override

@@ -2,13 +2,13 @@
 
 ### Extenção nescessaria
 
-Para começar crie um banco de dados e adiciona a extenção hstore:
+Para começar crie o banco de dados general e adiciona a extenção hstore:
 
 ```roomsql
-CREATE EXTENSION hstore SCHEMA "public" VERSION 1.8;
+CREATE EXTENSION hstore SCHEMA "public";
 ```
 
-### Schema general
+### Schema parameter
 
 ```roomsql
 CREATE SCHEMA parameter AUTHORIZATION postgres;
@@ -26,4 +26,5 @@ CREATE TABLE parameter.resource (
 );
 CREATE INDEX resource_id_idx ON parameter.resource USING btree (id);
 CREATE INDEX resource_type_idx ON parameter.resource USING btree (type);
+ALTER TABLE parameter.resource ADD CONSTRAINT resource_check CHECK (type in ('URLWEB','DATABASECONNECTION','LINK'));
 ```

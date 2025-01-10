@@ -2,7 +2,7 @@ package br.com.fynncs.core.connection;
 
 import br.com.fynncs.core.enums.ConnectionProvider;
 import br.com.fynncs.core.model.Resource;
-import br.com.fynncs.services.ReaderProperties;
+import br.com.fynncs.core.service.ResourceService;
 
 import java.sql.*;
 import java.util.Map;
@@ -173,9 +173,7 @@ class Connection implements java.sql.Connection {
     }
 
     private String environment() throws Exception {
-        ReaderProperties readerProperties = new ReaderProperties();
-        readerProperties.read(readerProperties.path("application.properties", Connection.class));
-        return readerProperties.getSpecificProperties("environment");
+        return ResourceService.getEnvironment();
     }
 
     public void startTransaction() throws SQLException {

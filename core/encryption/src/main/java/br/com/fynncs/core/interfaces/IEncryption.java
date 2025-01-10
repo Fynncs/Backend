@@ -10,5 +10,6 @@ import java.security.spec.InvalidKeySpecException;
 
 public interface IEncryption {
     public String encrypt(String text, String key) throws InvalidKeySpecException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException;
+
     public String decrypt(String text, String key) throws Exception;
 }

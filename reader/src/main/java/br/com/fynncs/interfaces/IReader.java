@@ -7,6 +7,8 @@ public interface IReader {
 
     InputStream read(String fileName) throws Exception;
 
+    void read(InputStream inputStream) throws Exception;
+
     Boolean save(String fileName, String value);
 
     Boolean save(String fileName, List<String> values);

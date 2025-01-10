@@ -8,11 +8,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.core.HttpHeaders;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.Principal;
 
+@Component
 public class AuthenticationFilter implements Filter {
+
+    private final Security security;
+
+    public AuthenticationFilter(Security security) {
+        this.security = security;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -59,10 +67,9 @@ public class AuthenticationFilter implements Filter {
         }
     }
 
-    private static Authentication getAuthentication(String authorization) {
+    private Authentication getAuthentication(String authorization) {
         Authentication authentication = null;
         try {
-            Security security = new Security();
             authentication = security.validateToken(authorization);
         } catch (Exception e) {
             throw new NotAuthorizedException("Error verifying token", e);

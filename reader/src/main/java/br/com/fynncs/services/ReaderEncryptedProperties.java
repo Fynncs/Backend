@@ -2,10 +2,12 @@ package br.com.fynncs.services;
 
 import br.com.fynncs.core.Encryption;
 import br.com.fynncs.interfaces.IReaderEncryptedProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
@@ -13,7 +15,8 @@ import java.util.Properties;
 @Service
 public class ReaderEncryptedProperties extends ReaderProperties implements IReaderEncryptedProperties {
 
-    private Encryption encryption = new Encryption();
+    @Autowired
+    private Encryption encryption;
 
     public ReaderEncryptedProperties() {
         super();
@@ -21,10 +24,14 @@ public class ReaderEncryptedProperties extends ReaderProperties implements IRead
 
     @Override
     public InputStream read(String fileName) throws Exception {
-        try (InputStream inputStream = new FileInputStream(fileName)) {
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(fileName);
             setProperties(new Properties());
             getProperties().load(inputStream);
             return inputStream;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
