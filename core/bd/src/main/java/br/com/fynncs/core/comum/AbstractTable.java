@@ -1,10 +1,14 @@
 package br.com.fynncs.core.comum;
 
+ import br.com.fynncs.core.connection.CRUDManager;
+import br.com.fynncs.core.enums.ResourceType;
+import br.com.fynncs.core.model.Resource;
+import br.com.fynncs.core.service.ResourceService;
+
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractTable {
 
@@ -50,5 +54,29 @@ public abstract class AbstractTable {
         sql.append(");");
 
         return sql.toString();
+    }
+
+    private void findAllConnection() throws Exception {
+        List<Resource> resources = ResourceService.findListByType(ResourceType.DATABASECONNECTION);
+        for(Resource resource: resources){
+            try(CRUDManager manager = new CRUDManager(resource, ResourceService.getConnectionProvider(resource))) {
+                manager.getProvider();
+            }
+        }
+    }
+
+    private List<String> findAllSchema(CRUDManager manager) throws SQLException {
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT schema_name ");
+        query.append("FROM information_schema.schemata ");
+        query.append("where schema_name not in ('public','information_schema','pg_catalog','pg_toast') ");
+        List<String> schemasName = new ArrayList<>();
+        try(PreparedStatement statement = manager.prepareStatement(query.toString());
+            ResultSet resultSet = statement.executeQuery()){
+            while (resultSet.next()){
+                schemasName.add(resultSet.getString("schema_name"));
+            }
+        }
+        return schemasName;
     }
 }
