@@ -23,13 +23,15 @@ public class SecurityTest {
     @Test
     public void createTokenTest() throws Exception {
         initializer();
-        Assertions.assertNotNull(security.createToken(new Authentication() {
+        String token = security.createToken(new Authentication() {
             {
-                setIdentifier("Mike");
+                setId("Mike");
                 setConnectionProvider("POSTGRES");
                 setDataBaseName("usuario");
             }
-        }, 100));
+        }, 100000);
+        System.out.println(token);
+        Assertions.assertNotNull(token);
     }
 
     @Test
@@ -37,11 +39,11 @@ public class SecurityTest {
         initializer();
         String token = security.createToken(new Authentication() {
             {
-                setIdentifier("Mike");
+                setId("Mike");
                 setConnectionProvider("POSTGRES");
                 setDataBaseName("usuario");
             }
         }, 100);
-        Assertions.assertEquals("Mike", security.validateToken(token).getIdentifier());
+        Assertions.assertEquals("Mike", security.validateToken(token).getId());
     }
 }

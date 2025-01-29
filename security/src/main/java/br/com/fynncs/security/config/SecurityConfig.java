@@ -2,6 +2,7 @@ package br.com.fynncs.security.config;
 
 import br.com.fynncs.config.ReaderEncryptedPropertiesConfig;
 import br.com.fynncs.security.service.Security;
+import br.com.fynncs.security.token.TokenGoogle;
 import br.com.fynncs.security.token.TokenSecurity;
 import br.com.fynncs.services.ReaderEncryptedProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,10 @@ public class SecurityConfig {
     @Bean
     public TokenSecurity tokenSecurity() throws Exception {
         return new TokenSecurity(readerEncryptedProperties);
+    }
+
+    @Bean
+    public TokenGoogle tokenGoogle() {
+        return new TokenGoogle();
     }
 }
