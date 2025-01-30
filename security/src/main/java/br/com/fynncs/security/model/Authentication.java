@@ -8,20 +8,22 @@ import java.io.Serializable;
 
 public class Authentication implements Serializable {
 
-    private String identifier;
+    private String id;
     private String dataBaseName;
     private String connectionProvider;
     private String token;
+    private String email;
+    private String system;
 
     public Authentication() {
     }
 
-    public Authentication(String identifier) {
-        this.identifier = identifier;
+    public Authentication(String id) {
+        this.id = id;
     }
 
-    public Authentication(String identifier, String token) {
-        this.identifier = identifier;
+    public Authentication(String id, String token) {
+        this.id = id;
         this.token = token;
     }
 
@@ -35,12 +37,12 @@ public class Authentication implements Serializable {
         }
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getId() {
+        return id;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getToken() {
@@ -65,6 +67,22 @@ public class Authentication implements Serializable {
 
     public void setConnectionProvider(String connectionProvider) {
         this.connectionProvider = connectionProvider;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSystem() {
+        return system;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
     }
 
     public String serializer() {
