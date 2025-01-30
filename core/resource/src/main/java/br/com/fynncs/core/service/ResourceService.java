@@ -52,6 +52,16 @@ public abstract class ResourceService {
         }
     }
 
+    public static String getUrlConnection(Resource resource) throws Exception {
+        return resource.getInfo().get(getEnvironment());
+    }
+
+    public static ConnectionProvider getConnectionProvider(Resource resource) throws Exception {
+        String urlConnection = resource.getInfo().get(getEnvironment());
+        String provider = urlConnection.split(":")[1];
+        return ConnectionProvider.valueOf(provider);
+    }
+
     private static String getStandardProvider() throws Exception {
         initializerProperties();
         return properties.getSpecificPropertiesDecrypt("provider.standard");
