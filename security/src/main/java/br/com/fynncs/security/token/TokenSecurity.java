@@ -48,7 +48,7 @@ public class TokenSecurity {
     public String createToken(Authentication authentication, Integer timeTokenExpiration) {
         try {
             JwtClaims claims = new JwtClaims();
-            claims.setIssuer("fynncs");
+            claims.setIssuer("nentech");
             if (timeTokenExpiration == null) {
                 timeTokenExpiration = (1000 * 60 * 60 * 3);
             }
@@ -57,9 +57,11 @@ public class TokenSecurity {
             claims.setIssuedAtToNow();
             //claims.setNotBeforeMinutesInThePast(2); // time before which the token is not yet valid (2 minutes ago)
             claims.setSubject("authentication");
-            claims.setClaim("identifier", authentication.getIdentifier());
+            claims.setClaim("id", authentication.getId());
             claims.setClaim("dataBaseName", authentication.getDataBaseName());
             claims.setClaim("connectionProvider", authentication.getConnectionProvider());
+            claims.setClaim("system", authentication.getSystem());
+            claims.setClaim("email", authentication.getEmail());
             JsonWebSignature jws = new JsonWebSignature();
             jws.setPayload(claims.toJson());
             jws.setKey(privateKey);
@@ -94,7 +96,7 @@ public class TokenSecurity {
                 //.setRequireExpirationTime() // the JWT must have an expiration time
                 .setMaxFutureValidityInMinutes((1000 * 60 * 60 * 3)) // but the  expiration time can't be too crazy
                 .setRequireSubject() // the JWT must have a subject claim
-                .setExpectedIssuer("fynncs") // whom the JWT needs to have been issued by
+                .setExpectedIssuer("nentech") // whom the JWT needs to have been issued by
                 //.setExpectedAudience("receiver") // to whom the JWT is intended for
                 .setVerificationKey(privateKey) // verify the signature with the sender's public key
                 .setJwsAlgorithmConstraints(jwsAlgConstraints) // limits the acceptable signature algorithm(s)
@@ -106,9 +108,11 @@ public class TokenSecurity {
             token = token.substring(token.indexOf(" ") + 1);
             JwtClaims jwtClaims = jwtConsumer.processToClaims(token);
             Authentication authentication = new Authentication();
-            authentication.setIdentifier(jwtClaims.getClaimValue("identifier", String.class));
+            authentication.setId(jwtClaims.getClaimValue("id", String.class));
             authentication.setDataBaseName(jwtClaims.getClaimValue("dataBaseName", String.class));
             authentication.setConnectionProvider(jwtClaims.getClaimValue("connectionProvider", String.class));
+            authentication.setSystem(jwtClaims.getClaimValue("system", String.class));
+            authentication.setEmail(jwtClaims.getClaimValue("email", String.class));
             authentication.setToken(token);
             return authentication;
         } catch (InvalidJwtException e) {

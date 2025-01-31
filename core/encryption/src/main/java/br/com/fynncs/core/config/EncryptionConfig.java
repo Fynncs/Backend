@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class EncryptionConfig {
 
     @Bean
-    public Encryption encryption(){
+    public Encryption encryption() {
         return new Encryption();
     }
 }
