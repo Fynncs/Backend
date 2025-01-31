@@ -88,7 +88,7 @@ public class CRUDManager extends CUDManager implements ICRUDManager {
     }
 
     private List<Object> verifierObjectToArray(Object value, String textSQL) {
-        if (value instanceof ArrayList<?>) {
+        if (value instanceof List<?>) {
             return values((List<?>) value, textSQL);
         }
         return value != null ? List.of(value) : null;
