@@ -28,7 +28,7 @@ public abstract class ModelState<T> implements IModelState {
     }
 
     public void setState(State state) {
-        if(state != null && !State.MODIFIED.equals(state)){
+        if (state != null && !State.MODIFIED.equals(state)) {
             restore();
         }
         this.state = state;
@@ -36,10 +36,6 @@ public abstract class ModelState<T> implements IModelState {
 
     public Boolean getRegisterModifiedAttributes() {
         return Optional.ofNullable(registerModifiedAttributes).orElse(Boolean.FALSE);
-    }
-
-    public void setModifiedAttributes(List<String> modifiedAttributes) {
-        this.modifiedAttributes = modifiedAttributes;
     }
 
     @Override
@@ -91,7 +87,7 @@ public abstract class ModelState<T> implements IModelState {
         if (modifiedAttributes == null) {
             modifiedAttributes = new ArrayList<>();
         }
-        if(!modifiedAttributes.contains(attribute)){
+        if (!modifiedAttributes.contains(attribute)) {
             modifiedAttributes.add(attribute);
         }
     }
@@ -99,6 +95,10 @@ public abstract class ModelState<T> implements IModelState {
     @Override
     public List<String> getModifiedAttributes() {
         return modifiedAttributes;
+    }
+
+    public void setModifiedAttributes(List<String> modifiedAttributes) {
+        this.modifiedAttributes = modifiedAttributes;
     }
 
     @Override
