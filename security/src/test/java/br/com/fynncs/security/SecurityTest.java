@@ -27,9 +27,10 @@ public class SecurityTest {
             {
                 setId("Mike");
                 setConnectionProvider("POSTGRES");
-                setDataBaseName("usuario");
+                setDataBaseName("fynncs");
+                setSystem("fynncs");
             }
-        }, 100000);
+        }, 10000000);
         System.out.println(token);
         Assertions.assertNotNull(token);
     }

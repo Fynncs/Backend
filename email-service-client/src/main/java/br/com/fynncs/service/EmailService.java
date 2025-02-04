@@ -1,8 +1,8 @@
-package br.com.fynncs.service.fynncs;
+package br.com.fynncs.service;
 
 import br.com.fynncs.core.enums.ConnectionProvider;
 import br.com.fynncs.interceptor.Interceptor;
-import br.com.fynncs.record.Client;
+import br.com.fynncs.record.User;
 import br.com.fynncs.resource.ResourcePath;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,13 @@ public class EmailService {
         PATH = ResourcePath.path(provider);
     }
 
-    public String sendResetPassword(Client client){
-        return restTemplate.postForObject(PATH + "/fynncs/sendResetPassword", client, String.class);
+    public String sendResetPassword(User user) {
+        return restTemplate.postForObject(PATH + "/sendResetPassword", user, String.class);
+    }
+    public String sendConfirmEmail(User user) {
+        return restTemplate.postForObject(PATH + "/sendConfirmEmail", user, String.class);
+    }
+    public String confirm(String id) {
+        return restTemplate.getForObject(PATH + "/confirm/" + id, String.class);
     }
 }

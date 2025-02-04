@@ -1,14 +1,15 @@
 package br.com.fynncs.core.config;
 
-import br.com.fynncs.core.Encryption;
+import br.com.fynncs.core.comum.AbstractTable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class EncryptionConfig {
+public class AbstractTableConfig {
 
     @Bean
-    public Encryption encryption() {
-        return new Encryption();
+    public AbstractTable abstractTable() {
+        return new AbstractTable();
     }
+
 }
